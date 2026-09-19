@@ -1,0 +1,34 @@
+[build]
+  # Vite compila por defecto en la carpeta "dist"
+  publish = "dist"
+  command = "npm run build"
+
+# Regla para Single Page Applications (SPA)
+# Redirige todo el tráfico a index.html para que el enrutador frontend se encargue
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Políticas de Seguridad Básicas para todo el sitio
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Content-Security-Policy se puede habilitar luego para mayor seguridad
+
+# Evitar caché en Service Worker para que siempre se actualice la PWA
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Evitar caché en el manifest para asegurar que los cambios de instalación impacten
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"

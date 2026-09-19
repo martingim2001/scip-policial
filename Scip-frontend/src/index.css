@@ -1,0 +1,273 @@
+:root {
+    --police-navy: #0b1c31;      /* Azul muy oscuro institucional */
+    --police-blue: #183050;      /* Azul secundario */
+    --police-gray: #e9ecef;
+    --alert-red: #dc3545;        /* Rojo alerta */
+    --alert-red-bg: #fff5f5;
+    --safe-green: #198754;       /* Verde limpio */
+    --safe-green-bg: #f0fdf4;
+    --bg-color: #f4f6f9;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: #333;
+    margin: 0;
+}
+
+/* Navbar S.C.I.P. */
+.navbar-police {
+    background-color: var(--police-navy);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.user-profile {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+}
+
+/* Contenedor Principal y Cards */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 2px solid var(--police-gray);
+    padding: 0;
+}
+
+/* Pestañas (Tabs) */
+.nav-tabs {
+    border-bottom: none;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    font-weight: 600;
+    padding: 1.2rem 1.5rem;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-tabs .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--police-navy);
+    background-color: #f8f9fa;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--police-navy);
+    background-color: transparent;
+}
+
+.nav-tabs .nav-link.active::after {
+    background-color: var(--police-navy);
+}
+
+/* Botones */
+.btn-police {
+    background-color: var(--police-navy);
+    color: white;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(11, 28, 49, 0.2);
+}
+
+.btn-police:hover {
+    background-color: var(--police-blue);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(11, 28, 49, 0.3);
+}
+
+.btn-police:active {
+    transform: translateY(0);
+}
+
+/* Formularios */
+.form-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-control {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--police-blue);
+    box-shadow: 0 0 0 0.25rem rgba(24, 48, 80, 0.15);
+}
+
+/* Área de Resultados */
+.result-box {
+    border-radius: 10px;
+    border-left: 6px solid;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    animation: slideUpFade 0.4s ease-out forwards;
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.result-positive {
+    border-left-color: var(--alert-red);
+    background-color: var(--alert-red-bg);
+}
+
+.result-negative {
+    border-left-color: var(--safe-green);
+    background-color: var(--safe-green-bg);
+}
+
+.result-status {
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+.result-data {
+    background-color: rgba(255,255,255,0.7);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 0.95rem;
+    color: #444;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.result-data strong {
+    color: #222;
+    display: inline-block;
+    width: 120px;
+}
+
+/* LOGIN SCREEN STYLES */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0b1c31 0%, #183050 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* Imagen institucional desenfocada */
+    background: url('https://images.unsplash.com/photo-1555921015-5ca32bfa0ceb?q=80&w=2070&auto=format&fit=crop') center/cover;
+    opacity: 0.15;
+    filter: blur(8px);
+    z-index: 0;
+}
+
+.login-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    padding: 2.5rem;
+    margin: 1rem;
+}
+
+/* ADMIN DASHBOARD STYLES */
+.admin-table-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+    border: 1px solid #eef2f5;
+}
+
+.table-police thead {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border-bottom: 2px solid var(--police-gray);
+}
+
+.table-police th {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-bottom: none;
+}
+
+/* Badges Jerarquías Tucumán */
+.badge-jefe {
+    background-color: #212529; /* Oscuro */
+    color: #f1c40f; /* Dorado */
+    border: 1px solid #f1c40f;
+}
+
+.badge-oficial {
+    background-color: var(--police-blue);
+    color: #ffffff;
+}
+
+.badge-suboficial {
+    background-color: #6c757d; /* Gris / Celeste oscuro */
+    color: #ffffff;
+}
+
+/* Responsividad Extra */
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 1rem;
+        font-size: 0.9rem;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .nav-tabs .nav-link i {
+        margin-right: 0 !important;
+        margin-bottom: 0.25rem;
+        font-size: 1.2rem;
+    }
+    .result-data strong {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}

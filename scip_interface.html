@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.C.I.P. - Sistema de Consulta de Identidad Policial</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --police-navy: #0b1c31;      /* Azul muy oscuro institucional */
+            --police-blue: #183050;      /* Azul secundario */
+            --police-gray: #e9ecef;
+            --alert-red: #dc3545;        /* Rojo alerta */
+            --alert-red-bg: #fff5f5;
+            --safe-green: #198754;       /* Verde limpio */
+            --safe-green-bg: #f0fdf4;
+            --bg-color: #f4f6f9;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+        }
+
+        /* Navbar S.C.I.P. */
+        .navbar-police {
+            background-color: var(--police-navy);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .user-profile {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        /* Contenedor Principal y Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 2px solid var(--police-gray);
+            padding: 0;
+        }
+
+        /* Pestañas (Tabs) */
+        .nav-tabs {
+            border-bottom: none;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 1.2rem 1.5rem;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-tabs .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--police-navy);
+            background-color: #f8f9fa;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--police-navy);
+            background-color: transparent;
+        }
+
+        .nav-tabs .nav-link.active::after {
+            background-color: var(--police-navy);
+        }
+
+        /* Botones */
+        .btn-police {
+            background-color: var(--police-navy);
+            color: white;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(11, 28, 49, 0.2);
+        }
+
+        .btn-police:hover {
+            background-color: var(--police-blue);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(11, 28, 49, 0.3);
+        }
+        
+        .btn-police:active {
+            transform: translateY(0);
+        }
+
+        /* Formularios */
+        .form-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--police-blue);
+            box-shadow: 0 0 0 0.25rem rgba(24, 48, 80, 0.15);
+        }
+
+        /* Área de Resultados */
+        .result-box {
+            display: none;
+            border-radius: 10px;
+            border-left: 6px solid;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            animation: slideUpFade 0.4s ease-out forwards;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-positive {
+            border-left-color: var(--alert-red);
+            background-color: var(--alert-red-bg);
+        }
+
+        .result-negative {
+            border-left-color: var(--safe-green);
+            background-color: var(--safe-green-bg);
+        }
+
+        .result-status {
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+        }
+
+        .result-data {
+            background-color: rgba(255,255,255,0.7);
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 0.95rem;
+            color: #444;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .result-data strong {
+            color: #222;
+            display: inline-block;
+            width: 120px;
+        }
+
+        /* Responsividad Extra */
+        @media (max-width: 768px) {
+            .nav-tabs .nav-link {
+                padding: 1rem;
+                font-size: 0.9rem;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-tabs .nav-link i {
+                margin-right: 0 !important;
+                margin-bottom: 0.25rem;
+                font-size: 1.2rem;
+            }
+            .result-data strong {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar Institucional -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-police sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-shield-shaded fs-2 me-3 text-white"></i>
+                <div class="d-flex flex-column">
+                    <span class="lh-1 mb-1">S.C.I.P.</span>
+                    <small class="text-white-50 fw-normal" style="font-size: 0.75rem; letter-spacing: 0;">Sistema de Consulta de Identidad Policial</small>
+                </div>
+            </a>
+            
+            <!-- Usuario Activo -->
+            <div class="d-flex align-items-center text-white ms-auto user-profile rounded-pill px-3 py-2">
+                <div class="d-none d-md-block text-end me-3">
+                    <div class="fw-bold lh-1 fs-6">Oficial J. Pérez</div>
+                    <small class="text-white-50" style="font-size: 0.75rem;">División Investigaciones</small>
+                </div>
+                <div class="bg-light text-dark rounded-circle d-flex justify-content-center align-items-center shadow-sm" style="width: 38px; height: 38px;">
+                    <i class="bi bi-person-fill fs-5"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="container py-5">
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                <!-- Tarjeta de Búsqueda -->
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs nav-fill card-header-tabs m-0" id="searchTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active d-flex align-items-center justify-content-center" id="person-tab" data-bs-toggle="tab" data-bs-target="#person-pane" type="button" role="tab" aria-controls="person-pane" aria-selected="true">
+                                    <i class="bi bi-person-badge fs-5 me-2"></i>
+                                    Consulta de Personas
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link d-flex align-items-center justify-content-center" id="vehicle-tab" data-bs-toggle="tab" data-bs-target="#vehicle-pane" type="button" role="tab" aria-controls="vehicle-pane" aria-selected="false">
+                                    <i class="bi bi-car-front fs-5 me-2"></i>
+                                    Consulta de Vehículos
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-body p-4 p-md-5">
+                        <div class="tab-content" id="searchTabsContent">
+                            
+                            <!-- Panel: Consulta de Personas -->
+                            <div class="tab-pane fade show active" id="person-pane" role="tabpanel" aria-labelledby="person-tab" tabindex="0">
+                                <form id="formPersona" onsubmit="handleSearch(event, 'persona')">
+                                    <div class="row g-4">
+                                        <div class="col-md-4">
+                                            <label for="dni" class="form-label fw-bold text-secondary"><i class="bi bi-credit-card-2-front me-1"></i> Número de DNI <span class="text-danger">*</span></label>
+                                            <input type="number" class="form-control form-control-lg" id="dni" placeholder="Ej. 12345678" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="apellido" class="form-label fw-bold text-secondary"><i class="bi bi-fonts me-1"></i> Apellido(s)</label>
+                                            <input type="text" class="form-control form-control-lg text-uppercase" id="apellido" placeholder="Apellido paterno">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="nombre" class="form-label fw-bold text-secondary"><i class="bi bi-fonts me-1"></i> Nombre(s)</label>
+                                            <input type="text" class="form-control form-control-lg text-uppercase" id="nombre" placeholder="Nombre completo">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-4 pt-3 border-top gap-3">
+                                        <button type="reset" class="btn btn-light border px-4 py-2 text-secondary fw-semibold" onclick="hideResults()"><i class="bi bi-eraser me-2"></i> Limpiar Campos</button>
+                                        <button type="submit" class="btn btn-police px-5 py-2"><i class="bi bi-search me-2"></i> Iniciar Búsqueda</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Panel: Consulta de Vehículos -->
+                            <div class="tab-pane fade" id="vehicle-pane" role="tabpanel" aria-labelledby="vehicle-tab" tabindex="0">
+                                <form id="formVehiculo" onsubmit="handleSearch(event, 'vehiculo')">
+                                    <div class="row g-4">
+                                        <div class="col-md-4">
+                                            <label for="dominio" class="form-label fw-bold text-secondary"><i class="bi bi-123 me-1"></i> Dominio (Patente) <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control form-control-lg text-uppercase" id="dominio" placeholder="AB123CD o ABC123" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="chasis" class="form-label fw-bold text-secondary"><i class="bi bi-nut me-1"></i> Número de Chasis</label>
+                                            <input type="text" class="form-control form-control-lg text-uppercase" id="chasis" placeholder="Opcional">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="motor" class="form-label fw-bold text-secondary"><i class="bi bi-gear-wide-connected me-1"></i> Número de Motor</label>
+                                            <input type="text" class="form-control form-control-lg text-uppercase" id="motor" placeholder="Opcional">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-4 pt-3 border-top gap-3">
+                                        <button type="reset" class="btn btn-light border px-4 py-2 text-secondary fw-semibold" onclick="hideResults()"><i class="bi bi-eraser me-2"></i> Limpiar Campos</button>
+                                        <button type="submit" class="btn btn-police px-5 py-2"><i class="bi bi-search me-2"></i> Iniciar Búsqueda</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenedor de Resultados -->
+                <div id="resultsContainer" class="d-none">
+                    <h5 class="text-secondary mb-3 d-flex align-items-center">
+                        <i class="bi bi-file-earmark-text me-2"></i> Reporte del Sistema
+                    </h5>
+
+                    <!-- Mockup: Resultado Positivo (Alerta de Captura) -->
+                    <div class="result-box result-positive" id="resultCaptura">
+                        <div class="d-flex flex-column flex-sm-row">
+                            <div class="me-4 mb-3 mb-sm-0 text-center">
+                                <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3.5rem;"></i>
+                            </div>
+                            <div class="w-100">
+                                <h4 class="text-danger result-status mb-1">PEDIDO DE CAPTURA ACTIVO</h4>
+                                <p class="text-danger mb-3 fw-medium"><i class="bi bi-broadcast me-1"></i> Alerta máxima: Proceder con cautela. Se requiere intervención e identificación inmediata.</p>
+                                
+                                <div class="result-data">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-2">
+                                            <strong>DNI/Doc:</strong> <span id="capDoc">12.345.678</span><br>
+                                            <strong>Identidad:</strong> <span id="capId">GÓMEZ, CARLOS ALBERTO</span><br>
+                                            <strong>Nacionalidad:</strong> ARGENTINA
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <strong>Juzgado:</strong> JUZGADO PENAL N° 3<br>
+                                            <strong>Carátula:</strong> ROBO CALIFICADO POR EL USO DE ARMA<br>
+                                            <strong>Fecha Oficio:</strong> 15/08/2023
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mockup: Resultado Negativo (Sin Impedimentos) -->
+                    <div class="result-box result-negative" id="resultLimpio">
+                        <div class="d-flex flex-column flex-sm-row">
+                            <div class="me-4 mb-3 mb-sm-0 text-center">
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 3.5rem;"></i>
+                            </div>
+                            <div class="w-100">
+                                <h4 class="text-success result-status mb-1">SIN IMPEDIMENTOS LEGALES</h4>
+                                <p class="text-muted mb-3"><i class="bi bi-info-circle me-1"></i> No se registran antecedentes penales, pedidos de secuestro ni de captura activos a la fecha.</p>
+                                
+                                <div class="result-data">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-2" id="limpioData">
+                                            <!-- Datos inyectados por JS -->
+                                        </div>
+                                        <div class="col-md-6 mb-2 border-start-md">
+                                            <strong>Última act. BD:</strong> 19/09/2026 02:00 AM<br>
+                                            <strong>Estado:</strong> Habilitado para circular<br>
+                                            <strong>Código Ref:</strong> OK-99421A
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Lógica de Simulación (Mockup) -->
+    <script>
+        function handleSearch(event, tipo) {
+            event.preventDefault();
+            
+            // Ocultar resultados previos
+            hideResults();
+            document.getElementById('resultsContainer').classList.remove('d-none');
+
+            let valorBusqueda = tipo === 'persona' ? document.getElementById('dni').value : document.getElementById('dominio').value.toUpperCase();
+            
+            // Lógica simple para simular los dos estados (Captura / Limpio)
+            // Para fines de mockup: Si el DNI termina en número par o la patente tiene números pares, da Limpio. 
+            // Si termina en impar, da Captura.
+            let esCaptura = false;
+            
+            if(tipo === 'persona') {
+                esCaptura = (parseInt(valorBusqueda.slice(-1)) % 2 !== 0);
+                
+                let nombre = document.getElementById('nombre').value.toUpperCase() || 'NO ESPECIFICADO';
+                let apellido = document.getElementById('apellido').value.toUpperCase() || 'NO ESPECIFICADO';
+                let identidad = apellido !== 'NO ESPECIFICADO' ? `${apellido}, ${nombre}` : nombre;
+
+                if (esCaptura) {
+                    document.getElementById('capDoc').innerText = valorBusqueda;
+                    document.getElementById('capId').innerText = identidad;
+                } else {
+                    document.getElementById('limpioData').innerHTML = `
+                        <strong>DNI/Doc:</strong> ${valorBusqueda}<br>
+                        <strong>Identidad:</strong> ${identidad}<br>
+                        <strong>Nacionalidad:</strong> ARGENTINA
+                    `;
+                }
+            } else {
+                esCaptura = (parseInt(valorBusqueda.replace(/\D/g, '').slice(-1) || '1') % 2 !== 0);
+                
+                let chasis = document.getElementById('chasis').value.toUpperCase() || 'NO VERIFICADO';
+                let motor = document.getElementById('motor').value.toUpperCase() || 'NO VERIFICADO';
+
+                if (esCaptura) {
+                    document.getElementById('capDoc').innerText = valorBusqueda;
+                    document.getElementById('capId').innerText = `VEHÍCULO CHASIS: ${chasis}`;
+                } else {
+                    document.getElementById('limpioData').innerHTML = `
+                        <strong>Dominio:</strong> ${valorBusqueda}<br>
+                        <strong>Chasis:</strong> ${chasis}<br>
+                        <strong>Motor:</strong> ${motor}
+                    `;
+                }
+            }
+
+            // Mostrar el cuadro correspondiente
+            setTimeout(() => {
+                if (esCaptura) {
+                    document.getElementById('resultCaptura').style.display = 'block';
+                } else {
+                    document.getElementById('resultLimpio').style.display = 'block';
+                }
+            }, 300); // Pequeño delay para simular "carga"
+        }
+
+        function hideResults() {
+            document.getElementById('resultsContainer').classList.add('d-none');
+            document.getElementById('resultCaptura').style.display = 'none';
+            document.getElementById('resultLimpio').style.display = 'none';
+        }
+        
+        // Limpiar resultados al cambiar de pestaña
+        document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('show.bs.tab', event => {
+                hideResults();
+                document.getElementById('formPersona').reset();
+                document.getElementById('formVehiculo').reset();
+            });
+        });
+    </script>
+</body>
+</html>
